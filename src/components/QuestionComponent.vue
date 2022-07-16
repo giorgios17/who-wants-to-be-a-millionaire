@@ -25,14 +25,28 @@
             {{ item.answer }}
           </button>
         </div>
-        <div v-show="showAnswer">
+        <div v-show="showAnswer && question.length != questionDone.length">
           <button @click="nextQuestion()" type="button" class="btn btn-light">
             Prossima domanda
           </button>
         </div>
+        <div v-show="question.length == questionDone.length">
+          <div v-if="correctAnswer > wrongAnswer">
+            <h3>Hai vinto!</h3>
+          </div>
+          <div v-else-if="(correctAnswer = wrongAnswer)">
+            <h3>Pareggio, riprova.</h3>
+          </div>
+          <div v-else>
+            <h3>Hai perso!</h3>
+          </div>
+          <ScoreComponent
+            :correctAnswer="correctAnswer"
+            :wrongAnswer="wrongAnswer"
+          />
+        </div>
       </div>
     </div>
-    <ScoreComponent :correctAnswer="correctAnswer" :wrongAnswer="wrongAnswer" />
   </div>
 </template>
 
@@ -112,19 +126,18 @@ export default {
         this.getRandomQuestion();
       } else {
         this.currentQuestion = random;
-        this.questionDone.push(random);
       }
     },
     //verifica la risposta e genera una nuova domanda
     verifyAnswer(item) {
       if (item) {
-        this.questionDone.push(this.currentQuestion);
-        this.showAnswer = true;
         this.correctAnswer++;
-      } else {
         this.questionDone.push(this.currentQuestion);
         this.showAnswer = true;
+      } else {
         this.wrongAnswer++;
+        this.questionDone.push(this.currentQuestion);
+        this.showAnswer = true;
       }
     },
     nextQuestion() {
