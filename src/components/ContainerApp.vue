@@ -5,19 +5,16 @@
     </div>
     <div>
       <QuestionComponent />
-      <AnswersComponent />
     </div>
   </div>
 </template>
 
 <script>
 import QuestionComponent from "./QuestionComponent.vue";
-import AnswersComponent from "./AnswersComponent.vue";
 export default {
   name: "ContainerApp",
   components: {
     QuestionComponent,
-    AnswersComponent,
   },
 };
 </script>
