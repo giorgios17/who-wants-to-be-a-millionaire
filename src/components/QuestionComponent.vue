@@ -15,10 +15,11 @@
             v-for="(item, index) in currentQuestion.answers"
             :key="index"
             class="col-12 col-md-5 border p-2 rounded-pill my-1 btn_answer"
-            @click="verifyAnswer(item.correct)"
+            @click="verifyAnswer(item.correct, index)"
             :class="{
               'bg-green': showAnswer && item.correct,
               'bg-red': showAnswer && !item.correct,
+              'blink-me': blink && indexClicked === index,
             }"
             :disabled="showAnswer"
           >
@@ -104,6 +105,8 @@ export default {
       correctAnswer: 0,
       wrongAnswer: 0,
       showAnswer: false,
+      blink: false,
+      indexClicked: null,
     };
   },
   components: {
@@ -124,16 +127,24 @@ export default {
       }
     },
     //verifica la risposta e genera una nuova domanda
-    verifyAnswer(item) {
-      if (item) {
-        this.correctAnswer++;
+    verifyAnswer(item, index) {
+      console.log(index);
+      this.indexClicked = index;
+      console.log(this.indexClicked);
+      // lampeggia button per due secondi
+      this.blink = true;
+      setTimeout(() => {
+        this.blink = false;
+      }, 2000);
+      setTimeout(() => {
+        if (item) {
+          this.correctAnswer++;
+        } else {
+          this.wrongAnswer++;
+        }
         this.questionDone.push(this.currentQuestion);
         this.showAnswer = true;
-      } else {
-        this.wrongAnswer++;
-        this.questionDone.push(this.currentQuestion);
-        this.showAnswer = true;
-      }
+      }, 2000);
     },
     nextQuestion() {
       this.showAnswer = false;
@@ -173,6 +184,24 @@ export default {
 
   &:hover {
     transform: scale(1.1);
+  }
+}
+.blink_me {
+  animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}
+.blink-me {
+  animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+  50% {
+    background-color: white;
   }
 }
 </style>
