@@ -21,7 +21,7 @@
               'bg-red': showAnswer && !item.correct && indexClicked === index,
               'blink-me': blink && indexClicked === index,
             }"
-            :disabled="showAnswer"
+            :disabled="answered"
           >
             {{ item.answer }}
           </button>
@@ -111,6 +111,7 @@ export default {
       showAnswer: false,
       blink: false,
       indexClicked: null,
+      answered: false,
     };
   },
   components: {
@@ -132,9 +133,8 @@ export default {
     },
     //verifica la risposta e genera una nuova domanda
     verifyAnswer(item, index) {
-      console.log(index);
       this.indexClicked = index;
-      console.log(this.indexClicked);
+      this.answered = true;
       // lampeggia button per due secondi
       this.blink = true;
       setTimeout(() => {
@@ -152,6 +152,7 @@ export default {
     },
     nextQuestion() {
       this.showAnswer = false;
+      this.answered = false;
       this.getRandomQuestion();
     },
     playAgain() {
@@ -159,6 +160,7 @@ export default {
       this.wrongAnswer = 0;
       this.questionDone = [];
       this.showAnswer = false;
+      this.answered = false;
       this.currentQuestion = "";
       this.getRandomQuestion();
     },
