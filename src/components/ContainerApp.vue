@@ -29,5 +29,6 @@ export default {
 .bg_content {
   background-color: #11093a;
   height: 100vh;
+  overflow-y: hidden;
 }
 </style>

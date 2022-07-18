@@ -1,7 +1,8 @@
 <template>
   <div>
-    <h2>Risposte corrette: {{ correctAnswer }}</h2>
-    <h2>Risposte sbagliate:{{ wrongAnswer }}</h2>
+    <h3>Hai terminato le domande! Il tuo risultato:</h3>
+    <h4>Risposte corrette: {{ correctAnswer }}</h4>
+    <h4>Risposte sbagliate: {{ wrongAnswer }}</h4>
   </div>
 </template>
 
@@ -9,14 +10,8 @@
 export default {
   name: "ScoreComponent",
   props: {
-    correctAnswer: {
-      type: Number,
-      required: true,
-    },
-    wrongAnswer: {
-      type: Number,
-      required: true,
-    },
+    correctAnswer: Number,
+    wrongAnswer: Number,
   },
 };
 </script>

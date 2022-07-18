@@ -14,7 +14,7 @@
           <button
             v-for="(item, index) in currentQuestion.answers"
             :key="index"
-            class="col-5 border p-2 rounded-pill my-3 btn_answer"
+            class="col-12 col-md-5 border p-2 rounded-pill my-1 btn_answer"
             @click="verifyAnswer(item.correct)"
             :class="{
               'bg-green': showAnswer && item.correct,
@@ -30,20 +30,15 @@
             Prossima domanda
           </button>
         </div>
+
         <div v-show="question.length == questionDone.length">
-          <div v-if="correctAnswer > wrongAnswer">
-            <h3>Hai vinto!</h3>
-          </div>
-          <div v-else-if="(correctAnswer = wrongAnswer)">
-            <h3>Pareggio, riprova.</h3>
-          </div>
-          <div v-else>
-            <h3>Hai perso!</h3>
-          </div>
           <ScoreComponent
             :correctAnswer="correctAnswer"
             :wrongAnswer="wrongAnswer"
           />
+          <button type="button" class="btn btn-light" @click="playAgain()">
+            Gioca di nuovo!
+          </button>
         </div>
       </div>
     </div>
@@ -144,6 +139,14 @@ export default {
       this.showAnswer = false;
       this.getRandomQuestion();
     },
+    playAgain() {
+      this.correctAnswer = 0;
+      this.wrongAnswer = 0;
+      this.questionDone = [];
+      this.showAnswer = false;
+      this.currentQuestion = "";
+      this.getRandomQuestion();
+    },
   },
 };
 </script>
@@ -152,10 +155,13 @@ export default {
 .btn_answer {
   background-color: transparent;
   color: white;
-  &:hover {
-    transform: scale(1.1);
+  transition: all 0.2s linear;
+  &:hover:enabled {
+    background-color: white;
+    color: black;
   }
 }
+
 .bg-green {
   background-color: green;
 }
