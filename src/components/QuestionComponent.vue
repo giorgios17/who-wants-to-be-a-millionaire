@@ -10,7 +10,7 @@
             <h5>{{ currentQuestion }}</h5>
           </div>
         </div>
-        <div class="row py-5 justify-content-between">
+        <div class="row py-3 justify-content-between">
           <button
             v-for="(item, index) in currentQuestion.answers"
             :key="index"
@@ -18,7 +18,7 @@
             @click="verifyAnswer(item.correct, index)"
             :class="{
               'bg-green': showAnswer && item.correct,
-              'bg-red': showAnswer && !item.correct,
+              'bg-red': showAnswer && !item.correct && indexClicked === index,
               'blink-me': blink && indexClicked === index,
             }"
             :disabled="showAnswer"
@@ -27,7 +27,11 @@
           </button>
         </div>
         <div v-show="showAnswer && question.length != questionDone.length">
-          <button @click="nextQuestion()" type="button" class="btn btn-light">
+          <button
+            @click="nextQuestion()"
+            type="button"
+            class="btn btn-light btn_next-question"
+          >
             Prossima domanda
           </button>
         </div>
@@ -37,7 +41,7 @@
             :correctAnswer="correctAnswer"
             :wrongAnswer="wrongAnswer"
           />
-          <button type="button" class="btn btn-light" @click="playAgain()">
+          <button type="button" class="btn btn-light mt-1" @click="playAgain()">
             Gioca di nuovo!
           </button>
         </div>
@@ -196,7 +200,31 @@ export default {
 
 @keyframes blinker {
   50% {
-    background-color: white;
+    background-color: rgb(206, 206, 7);
+  }
+}
+.btn_next-question {
+  -webkit-animation: scale-up-center 0.4s linear both;
+  animation: scale-up-center 0.4s linear both;
+  @-webkit-keyframes scale-up-center {
+    0% {
+      -webkit-transform: scale(0.5);
+      transform: scale(0.5);
+    }
+    100% {
+      -webkit-transform: scale(1);
+      transform: scale(1);
+    }
+  }
+  @keyframes scale-up-center {
+    0% {
+      -webkit-transform: scale(0.5);
+      transform: scale(0.5);
+    }
+    100% {
+      -webkit-transform: scale(1);
+      transform: scale(1);
+    }
   }
 }
 </style>

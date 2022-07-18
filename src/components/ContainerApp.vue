@@ -23,7 +23,13 @@ export default {
 #logo-container {
   background-color: #141589;
   img {
-    width: 300px;
+    width: 200px;
+    @media screen and (min-width: 576px) {
+      width: 300px;
+    }
+    @media screen and (max-height: 670px) {
+      width: 100px;
+    }
   }
 }
 .bg_content {
