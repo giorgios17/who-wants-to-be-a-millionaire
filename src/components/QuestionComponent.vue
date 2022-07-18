@@ -167,9 +167,10 @@ export default {
   background-color: transparent;
   color: white;
   transition: all 0.2s linear;
-  &:hover:enabled {
-    background-color: white;
-    color: black;
+  @media screen and (min-width: 576px) {
+    &:hover:enabled {
+      transform: scale(1.1);
+    }
   }
 }
 
@@ -179,13 +180,7 @@ export default {
 .bg-red {
   background-color: red;
 }
-#next-question {
-  background-color: white;
 
-  &:hover {
-    transform: scale(1.1);
-  }
-}
 .blink_me {
   animation: blinker 1s linear infinite;
 }
