@@ -3,6 +3,7 @@
     <div class="container py-3">
       <div class="row justify-content-center">
         <div class="col-10 border p-2 rounded-pill">
+          <!-- DOMANDA -->
           <div v-if="currentQuestion">
             <h5>{{ currentQuestion.text }}</h5>
           </div>
@@ -10,6 +11,8 @@
             <h5>{{ currentQuestion }}</h5>
           </div>
         </div>
+        <!-- FINE DOMANDA -->
+        <!-- RISPOSTE -->
         <div class="row py-3 justify-content-between">
           <button
             v-for="(item, index) in currentQuestion.answers"
@@ -25,8 +28,25 @@
           >
             {{ item.answer }}
           </button>
+          <!-- FINE RISPOSTE -->
         </div>
-        <div v-show="showAnswer && question.length != questionDone.length">
+
+        <!-- REWARDS -->
+        <div class="d-flex flex-column align-items-end">
+          <div
+            class="col-3 border border-light"
+            v-for="(item, index) in rewards"
+            :key="'reward' + index"
+            :class="{ 'bg-green': index === correctAnswer }"
+          >
+            €{{ item }}
+          </div>
+        </div>
+        <!-- FINE REWARDS -->
+
+        <div
+          v-show="showAnswer && question.length != questionDone.length && !lose"
+        >
           <button
             @click="nextQuestion()"
             type="button"
@@ -35,12 +55,20 @@
             Prossima domanda
           </button>
         </div>
-
+        <!-- SE VINCI -->
         <div v-show="question.length == questionDone.length">
-          <ScoreComponent
+          <!-- <ScoreComponent
             :correctAnswer="correctAnswer"
             :wrongAnswer="wrongAnswer"
-          />
+          /> -->
+          <h3>HAI VINTO €1.000.000!</h3>
+          <button type="button" class="btn btn-light mt-1" @click="playAgain()">
+            Gioca di nuovo!
+          </button>
+        </div>
+        <!-- SE PERDI  -->
+        <div v-show="lose">
+          <h3>HAI PERSO!</h3>
           <button type="button" class="btn btn-light mt-1" @click="playAgain()">
             Gioca di nuovo!
           </button>
@@ -51,7 +79,7 @@
 </template>
 
 <script>
-import ScoreComponent from "./ScoreComponent.vue";
+// import ScoreComponent from "./ScoreComponent.vue";
 
 export default {
   name: "QuestionComponent",
@@ -104,6 +132,7 @@ export default {
           ],
         },
       ],
+      rewards: [0, 10000, 50000, 100000, 500000, 1000000],
       currentQuestion: "",
       questionDone: [],
       correctAnswer: 0,
@@ -112,10 +141,11 @@ export default {
       blink: false,
       indexClicked: null,
       answered: false,
+      lose: false,
     };
   },
   components: {
-    ScoreComponent,
+    // ScoreComponent,
   },
   mounted() {
     this.getRandomQuestion();
@@ -145,6 +175,7 @@ export default {
           this.correctAnswer++;
         } else {
           this.wrongAnswer++;
+          this.lose = true;
         }
         this.questionDone.push(this.currentQuestion);
         this.showAnswer = true;
@@ -162,6 +193,7 @@ export default {
       this.showAnswer = false;
       this.answered = false;
       this.currentQuestion = "";
+      this.lose = false;
       this.getRandomQuestion();
     },
   },
