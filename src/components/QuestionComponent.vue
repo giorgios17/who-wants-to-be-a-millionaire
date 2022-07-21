@@ -1,77 +1,90 @@
 <template>
   <div>
     <div class="container py-3">
-      <div class="row justify-content-center">
-        <div class="col-10 border p-2 rounded-pill">
-          <!-- DOMANDA -->
-          <div v-if="currentQuestion">
-            <h5>{{ currentQuestion.text }}</h5>
+      <div v-if="!playGame">
+        <button @click="startGame()" class="btn btn-primary">
+          Inizia la tua scalata!
+        </button>
+      </div>
+      <div v-else>
+        <div class="row justify-content-center">
+          <div class="col-10 border p-2 rounded-pill">
+            <!-- DOMANDA -->
+            <div v-if="currentQuestion">
+              <h5>{{ currentQuestion.text }}</h5>
+            </div>
+            <div v-else>
+              <h5>{{ currentQuestion }}</h5>
+            </div>
           </div>
-          <div v-else>
-            <h5>{{ currentQuestion }}</h5>
+          <!-- FINE DOMANDA -->
+          <!-- RISPOSTE -->
+          <div class="row py-3 justify-content-between">
+            <button
+              v-for="(item, index) in currentQuestion.answers"
+              :key="index"
+              class="col-12 col-md-5 border p-2 rounded-pill my-1 btn_answer"
+              @click="verifyAnswer(item.correct, index)"
+              :class="{
+                'bg-green': showAnswer && item.correct,
+                'bg-red': showAnswer && !item.correct && indexClicked === index,
+                'blink-me': blink && indexClicked === index,
+              }"
+              :disabled="answered"
+            >
+              {{ item.answer }}
+            </button>
+            <!-- FINE RISPOSTE -->
           </div>
-        </div>
-        <!-- FINE DOMANDA -->
-        <!-- RISPOSTE -->
-        <div class="row py-3 justify-content-between">
-          <button
-            v-for="(item, index) in currentQuestion.answers"
-            :key="index"
-            class="col-12 col-md-5 border p-2 rounded-pill my-1 btn_answer"
-            @click="verifyAnswer(item.correct, index)"
-            :class="{
-              'bg-green': showAnswer && item.correct,
-              'bg-red': showAnswer && !item.correct && indexClicked === index,
-              'blink-me': blink && indexClicked === index,
-            }"
-            :disabled="answered"
-          >
-            {{ item.answer }}
-          </button>
-          <!-- FINE RISPOSTE -->
-        </div>
 
-        <!-- REWARDS -->
-        <div class="d-flex flex-column align-items-end">
-          <div
-            class="col-3 border border-light"
-            v-for="(item, index) in rewards"
-            :key="'reward' + index"
-            :class="{ 'bg-green': index === correctAnswer }"
-          >
-            €{{ item }}
+          <!-- REWARDS -->
+          <div class="d-flex flex-column align-items-end">
+            <div
+              class="col-3 border border-light"
+              v-for="(item, index) in rewards"
+              :key="'reward' + index"
+              :class="{ rewardColor: index === correctAnswer }"
+            >
+              €{{ item }}
+            </div>
           </div>
-        </div>
-        <!-- FINE REWARDS -->
+          <!-- FINE REWARDS -->
 
-        <div
-          v-show="showAnswer && question.length != questionDone.length && !lose"
-        >
-          <button
-            @click="nextQuestion()"
-            type="button"
-            class="btn btn-light btn_next-question"
-          >
-            Prossima domanda
-          </button>
-        </div>
-        <!-- SE VINCI -->
-        <div v-show="question.length == questionDone.length">
-          <!-- <ScoreComponent
+          <div v-show="showAnswer && questionDone.length != 5 && !lose">
+            <button
+              @click="nextQuestion()"
+              type="button"
+              class="btn btn-light btn_next-question"
+            >
+              Prossima domanda
+            </button>
+          </div>
+          <!-- SE VINCI -->
+          <div v-show="questionDone.length == 5 && !lose">
+            <!-- <ScoreComponent
             :correctAnswer="correctAnswer"
             :wrongAnswer="wrongAnswer"
           /> -->
-          <h3>HAI VINTO €1.000.000!</h3>
-          <button type="button" class="btn btn-light mt-1" @click="playAgain()">
-            Gioca di nuovo!
-          </button>
-        </div>
-        <!-- SE PERDI  -->
-        <div v-show="lose">
-          <h3>HAI PERSO!</h3>
-          <button type="button" class="btn btn-light mt-1" @click="playAgain()">
-            Gioca di nuovo!
-          </button>
+            <h3>HAI VINTO €1.000.000!</h3>
+            <button
+              type="button"
+              class="btn btn-light mt-1"
+              @click="playAgain()"
+            >
+              Gioca di nuovo!
+            </button>
+          </div>
+          <!-- SE PERDI  -->
+          <div v-show="lose">
+            <h3>HAI PERSO!</h3>
+            <button
+              type="button"
+              class="btn btn-light mt-1"
+              @click="playAgain()"
+            >
+              Gioca di nuovo!
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -131,6 +144,33 @@ export default {
             { answer: "Svezia", correct: true },
           ],
         },
+        {
+          text: "Quanti anni può vivere, al massimo, un’oca?",
+          answers: [
+            { answer: "7 anni", correct: false },
+            { answer: "40 anni", correct: true },
+            { answer: "15 anni", correct: false },
+            { answer: "27 anni", correct: false },
+          ],
+        },
+        {
+          text: "Quanti fusi orari ci sono in Russia?",
+          answers: [
+            { answer: "8", correct: false },
+            { answer: "4", correct: false },
+            { answer: "15", correct: false },
+            { answer: "11", correct: true },
+          ],
+        },
+        {
+          text: "Quante strisce ci sono sulla bandiera americana?",
+          answers: [
+            { answer: "13", correct: true },
+            { answer: "15", correct: false },
+            { answer: "33", correct: false },
+            { answer: "7", correct: false },
+          ],
+        },
       ],
       rewards: [0, 10000, 50000, 100000, 500000, 1000000],
       currentQuestion: "",
@@ -142,6 +182,7 @@ export default {
       indexClicked: null,
       answered: false,
       lose: false,
+      playGame: false,
     };
   },
   components: {
@@ -155,7 +196,7 @@ export default {
     getRandomQuestion() {
       let random =
         this.question[Math.floor(Math.random() * this.question.length)];
-      if (this.questionDone.includes(random)) {
+      if (this.questionDone.includes(random) && this.questionDone.length < 5) {
         this.getRandomQuestion();
       } else {
         this.currentQuestion = random;
@@ -181,11 +222,13 @@ export default {
         this.showAnswer = true;
       }, 2000);
     },
+    //prossima domanda
     nextQuestion() {
       this.showAnswer = false;
       this.answered = false;
       this.getRandomQuestion();
     },
+    // gioca di nuovo e resetta tutti i campi
     playAgain() {
       this.correctAnswer = 0;
       this.wrongAnswer = 0;
@@ -195,6 +238,10 @@ export default {
       this.currentQuestion = "";
       this.lose = false;
       this.getRandomQuestion();
+    },
+    // inizia gioco
+    startGame() {
+      this.playGame = true;
     },
   },
 };
@@ -210,6 +257,11 @@ export default {
       transform: scale(1.1);
     }
   }
+}
+
+.rewardColor {
+  background-color: green;
+  transition: all 0.5s linear;
 }
 
 .bg-green {
